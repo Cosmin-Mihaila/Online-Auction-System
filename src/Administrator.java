@@ -1,6 +1,6 @@
 public class Administrator extends Angajat implements Runnable{
     @Override
-    public void update(int idWinner, int idLicitatie) {
+    public void update(int idWinner, int idLicitatie, int idProdus) {
 
     }
 

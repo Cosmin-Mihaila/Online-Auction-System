@@ -105,7 +105,7 @@ public class Licitatie implements Runnable {
             }
 
             try {
-                sleep(100);
+                sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -120,7 +120,7 @@ public class Licitatie implements Runnable {
                     int licitatiiCastigate = -1;
                     int idWinner = 0;
                     for(Broker broker : brokers){
-                        winnersList = broker.winner(maximum, id, licitatiiCastigate);
+                        winnersList = broker.winner(maximum, id);
                         if(winnersList.size() == 0){
                             continue;
                         }
@@ -138,13 +138,15 @@ public class Licitatie implements Runnable {
                 else{
                     System.out.println("Produsul nu s-a vandut!");
                 }
+                //this.CDL.stergeProdus();
+                return;
             }
         }
     }
 
     public void notifyWinner(int idWinner, int idLicitatie){
         for(Broker broker : brokers){
-            broker.update(idWinner, idLicitatie);
+            broker.update(idWinner, idLicitatie, idProdus);
         }
     }
 }

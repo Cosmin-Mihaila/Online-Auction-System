@@ -98,7 +98,6 @@ public class Main {
                             .build();
                     CDL.addLicitatie(licitatie);
                 }
-
             }
         }
 

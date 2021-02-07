@@ -24,12 +24,13 @@ public class Broker extends Angajat{
     CasaDeLicitatii produse;
 
     @Override
-    public void update(int idWinner, int idLicitatie) {
+    public void update(int idWinner, int idLicitatie, int idProdus) {
         for(ClientBroker clientBroker : clientiActivi){
             if(clientBroker.getIdLicitatie() != idLicitatie){
                 continue;
             }
             if(clientBroker.getClient().getId() == idWinner){
+                casaDeLicitatii.stergeProdus(idProdus);
                 clientBroker.getClient().setNrLicitatiiCastigate(clientBroker.getClient().getNrLicitatiiCastigate() + 1);
                 System.out.println("Castigatorul are id-ul " + clientBroker.getClient().getId());
             }
@@ -66,9 +67,8 @@ public class Broker extends Angajat{
         }
     }
 
-    public List<ClientBroker> winner(int winPrice, int id, int licitatiiCastigate){
+    public List<ClientBroker> winner(int winPrice, int id){
         List<ClientBroker> list = new ArrayList<>();
-        int newLicitatiiCastigate = licitatiiCastigate;
         for(ClientBroker clientBroker : clientiActivi){
             if(clientBroker.getIdLicitatie() != id){
                 continue;

@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class CasaDeLicitatii implements Runnable{
     private int capacitate = 20;
@@ -124,6 +121,9 @@ public class CasaDeLicitatii implements Runnable{
     public void adaugaProdus(Produs produs){
         produse.add(produs);
     }
+    public void stergeProdus(int idProdus){
+        produse.removeIf(produs -> produs.getID() == idProdus);
+    }
 
     public void listClients(){
         for(Client x : clienti){
@@ -150,6 +150,64 @@ public class CasaDeLicitatii implements Runnable{
                     notifyAllBrokers(licitatie.getId());
                     licitatie.setBrokers(brokers);
                     Thread thread = new Thread(licitatie);
+                    Thread thread2 = new Thread() {
+                        @Override
+                        public void run() {
+                            Integer maximum = 0;
+                            for(int i = 0; i < licitatie.getNrPasiMaxim(); i ++){
+                                for(Broker broker : brokers){
+                                    List<Integer> list = broker.brokerPay(licitatie.getId());
+                                    if(list.size() == 0) continue;
+                                    Integer auxMaxim = Collections.max(list);
+                                    if(auxMaxim > maximum){
+                                        maximum = auxMaxim;
+                                    }
+                                }
+
+                                for(Broker broker : brokers){
+                                    broker.adjustPay(maximum, licitatie.getId());
+                                }
+
+                                try {
+                                    sleep(200);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println("Pretul licitatiei cu id-ul " + id + " este " + maximum);
+                            }
+
+                            for(Produs produs : CDL.getProduse()){
+                                if(idProdus == produs.getID()){
+                                    if(produs.getPretMinim() < maximum){
+
+                                        List<ClientBroker> winnersList = new ArrayList<>();
+                                        int licitatiiCastigate = -1;
+                                        int idWinner = 0;
+                                        for(Broker broker : brokers){
+                                            winnersList = broker.winner(maximum, id);
+                                            if(winnersList.size() == 0){
+                                                continue;
+                                            }
+                                            for(ClientBroker clientBroker : winnersList){
+                                                if(clientBroker.getClient().getNrLicitatiiCastigate() > licitatiiCastigate){
+                                                    licitatiiCastigate = clientBroker.getClient().getNrLicitatiiCastigate();
+                                                    idWinner = clientBroker.getClient().getId();
+                                                }
+                                            }
+                                        }
+
+                                        notifyWinner(idWinner, id);
+                                        System.out.println("Produsul s-a vandut la pretul de " + maximum + " clientului cu id-ul " + idWinner);
+                                    }
+                                    else{
+                                        System.out.println("Produsul nu s-a vandut!");
+                                    }
+                                    //this.CDL.stergeProdus();
+                                    return;
+                                }
+                            }
+                        }
+                    };
                     thread.start();
                 }
                 return;
@@ -171,6 +229,16 @@ public class CasaDeLicitatii implements Runnable{
 
     public void primire(int pay, int idLicitatie){
 
+    }
+
+    public void listProduse(){
+        if(produse.size() == 0){
+            System.out.println("Nu sunt produse in casa de licitatii");
+            return;
+        }
+        for(Produs produs : produse){
+            System.out.println(produs.toString());
+        }
     }
 
 }

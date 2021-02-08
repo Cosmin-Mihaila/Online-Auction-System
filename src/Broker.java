@@ -1,19 +1,11 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Broker extends Angajat{
     private List<Client> clienti = new ArrayList<>();
-    private List<ClientBroker> clientiActivi = new ArrayList<>();
+    private List<ClientBroker> clientiActivi = Collections.synchronizedList(new ArrayList<>());
 
-    public Broker(CasaDeLicitatii casaDeLicitatii){
-        this.casaDeLicitatii = casaDeLicitatii;
-        this.casaDeLicitatii.addBroker(this);
-    }
-
-    public void setProduse(CasaDeLicitatii produse) {
-        this.produse = produse;
+    public Broker(){
+        CasaDeLicitatii.getInstance().addBroker(this);
     }
 
     public void addClient(Client client){
@@ -21,7 +13,6 @@ public class Broker extends Angajat{
     }
 
     public void addClientBroker(ClientBroker clientBroker){clientiActivi.add(clientBroker);}
-    CasaDeLicitatii produse;
 
     @Override
     public void update(int idWinner, int idLicitatie, int idProdus) {
@@ -30,35 +21,61 @@ public class Broker extends Angajat{
                 continue;
             }
             if(clientBroker.getClient().getId() == idWinner){
-                casaDeLicitatii.stergeProdus(idProdus);
+                CasaDeLicitatii.getInstance().stergeProdus(idProdus);
                 clientBroker.getClient().setNrLicitatiiCastigate(clientBroker.getClient().getNrLicitatiiCastigate() + 1);
                 System.out.println("Castigatorul are id-ul " + clientBroker.getClient().getId());
             }
             clientBroker.getClient().setNrParticipari(clientBroker.getClient().getNrParticipari() + 1);
         }
 
+        clientiActivi.removeIf(clientBr -> clientBr.getIdLicitatie() == idLicitatie);
+        updateClientList();
     }
 
+    public void updateClientList(){
+        List<Client> toDelete = new ArrayList<>();
+        for(Client client : clienti){
+            boolean found = false;
+            for(ClientBroker clientBroker : clientiActivi){
+                if (clientBroker.getClient().equals(client)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found){
+                toDelete.add(client);
+            }
+        }
+
+        clienti.removeAll(toDelete);
+
+        listClients();
+    }
     public void listClients(){
+        if(clienti.size() == 0){
+            System.out.println("Acest broker nu are niciun client");
+            return;
+        }
         for(Client x : clienti){
             System.out.println(x.toString());
         }
     }
 
-    public List<Integer> brokerPay(int idLicitatie){
-        List<Integer> list = new ArrayList<>();
+    public List<Double> brokerPay(int idLicitatie){
+        List<Double> list = new ArrayList<>();
         for(ClientBroker clientBroker : clientiActivi){
                 if(clientBroker.getIdLicitatie() != idLicitatie){
                     continue;
                 }
-                int payment = clientBroker.pay();
+                double payment = clientBroker.pay();
                 list.add(payment);
         }
 
         return list;
     }
 
-    public void adjustPay(int currentMax, int idLicitatie){
+    public void adjustPay(double currentMax, int idLicitatie){
         for(ClientBroker clientBroker : clientiActivi){
             if(clientBroker.getIdLicitatie() != idLicitatie){
                 continue;
@@ -67,7 +84,7 @@ public class Broker extends Angajat{
         }
     }
 
-    public List<ClientBroker> winner(int winPrice, int id){
+    public List<ClientBroker> winner(double winPrice, int id){
         List<ClientBroker> list = new ArrayList<>();
         for(ClientBroker clientBroker : clientiActivi){
             if(clientBroker.getIdLicitatie() != id){
@@ -80,16 +97,4 @@ public class Broker extends Angajat{
 
         return list;
     }
-    //    @Override
-//    public void run() {
-////        try {
-////            for (int i = 0; i < 30; i++) {
-////                produse.adaugaProdus(new Produs(i));
-////                System.out.println("Broker: " + i);
-////                Thread.sleep(Math.abs(new Random().nextLong()) % 100);
-////            }
-////        } catch (InterruptedException e) {
-////            e.printStackTrace();
-////        }
-//    }
 }

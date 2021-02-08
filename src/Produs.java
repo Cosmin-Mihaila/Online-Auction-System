@@ -1,6 +1,6 @@
 public class Produs {
-    private int id;
-    private String nume;
+    private final int id;
+    private final String nume;
     private int pretVanzare;
     private int pretMinim;
     private int an;
@@ -8,11 +8,8 @@ public class Produs {
     public int getID(){
         return id;
     }
-    Produs(int id){
-        this.id = id;
-    }
 
-    public Produs(int id, String nume, int pretVanzare, int pretMinim, int an) {
+   Produs(int id, String nume, int pretVanzare, int pretMinim, int an) {
         this.id = id;
         this.nume = nume;
         this.pretVanzare = pretVanzare;
@@ -20,23 +17,20 @@ public class Produs {
         this.an = an;
     }
 
-    Produs(){}
+    public Produs(int id, String nume){
+        this.id = id;
+        this.nume = nume;
+    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getNume() {
         return nume;
     }
 
-    public void setNume(String nume) {
-        this.nume = nume;
-    }
 
     public double getPretVanzare() {
         return pretVanzare;
@@ -60,5 +54,16 @@ public class Produs {
 
     public void setAn(int an) {
         this.an = an;
+    }
+
+    @Override
+    public String toString() {
+        return "Produs{" +
+                "id=" + id +
+                ", nume='" + nume + '\'' +
+                ", pretVanzare=" + pretVanzare +
+                ", pretMinim=" + pretMinim +
+                ", an=" + an +
+                '}';
     }
 }

@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Random;
 
-public class Client implements Runnable {
+public class Client{
     private int id;
     private String nume;
     private String adresa;
@@ -74,18 +74,6 @@ public class Client implements Runnable {
         this.id = id;
     }
 
-    @Override
-    public void run() {
-//        try {
-//            for (int i = 0; i < 30; i++) {
-//                System.out.println(id + " Client: " + produse.stergeProdus().getID());
-//                Thread.sleep(Math.abs(new Random().nextLong()) % 100);
-//            }
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    }
 
     @Override
     public String toString() {

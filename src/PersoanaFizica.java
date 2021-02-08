@@ -10,10 +10,4 @@ public class PersoanaFizica extends Client {
         this.dataNastere = dataNastere;
     }
 
-//    @Override
-//    public String toString() {
-//        return "PersoanaFizica{" +
-//                "dataNastere='" + dataNastere + '\'' +
-//                '}';
-//    }
 }

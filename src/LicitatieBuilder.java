@@ -21,10 +21,6 @@ public class LicitatieBuilder {
         return this;
     }
 
-    public LicitatieBuilder withCDL(CasaDeLicitatii casaDeLicitatii){
-        licitatie.setCDL(casaDeLicitatii);
-        return this;
-    }
 
     public Licitatie build() {
         return licitatie;

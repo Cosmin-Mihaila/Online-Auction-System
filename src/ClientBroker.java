@@ -4,28 +4,44 @@ public class ClientBroker {
     private Client client;
     private int pretMaxim;
     private int idLicitatie;
-
-    public int getLastMax() {
+    private double lastMax;
+    private double comision;
+    public double getLastMax() {
         return lastMax;
+    }
+
+    public void updateComision(){
+        double comision = 0;
+        if(client instanceof PersoanaFizica && client.getNrParticipari() < 5){
+            comision = (20.0 / 100.0) * lastMax;
+        }
+        else if(client instanceof PersoanaFizica && client.getNrParticipari() > 5){
+            comision = (15.0 /100.0) * lastMax;
+        }
+        else if(client instanceof PersoanaJuridica && client.getNrParticipari() < 25){
+            comision = (25.0 / 100.0) * lastMax;
+        }
+        else if(client instanceof  PersoanaJuridica && client.getNrParticipari() > 25){
+            comision = (10.0 / 100.0) * lastMax;
+        }
+        this.comision = comision;
     }
 
     public void setLastMax(int lastMax) {
         this.lastMax = lastMax;
     }
 
-    private int lastMax;
-
-    public int getCurrentMax() {
+    public double getCurrentMax() {
         return currentMax;
     }
 
-    public void setCurrentMax(int currentMax) {
+    public void setCurrentMax(double currentMax) {
         this.currentMax = currentMax;
     }
 
-    private int currentMax = 0;
+    private double currentMax = 0.0;
 
-    public ClientBroker(Client client, int pretMaxim, int idLicitatie){
+    public ClientBroker(Client client, int pretMaxim, int idLicitatie) {
         this.client = client;
         this.pretMaxim = pretMaxim;
         this.idLicitatie = idLicitatie;
@@ -55,18 +71,19 @@ public class ClientBroker {
         this.idLicitatie = idLicitatie;
     }
 
-    public int pay(){
+    public double pay() {
         int random = 0;
-        while(random == 0){
-            random = new Random().nextInt(3);
+        while (random == 0) {
+            random = new Random().nextInt(4);
         }
-       if(currentMax + (pretMaxim*random)/100 < pretMaxim) {
-            lastMax = (currentMax + (pretMaxim*random) / 100);
-           return (currentMax + (pretMaxim*random) / 100);
-       }
-       else{
-           lastMax = pretMaxim;
-           return pretMaxim;
-       }
+        if ( + (pretMaxim * random) / 100 < pretMaxim) {
+            lastMax = (currentMax + (pretMaxim * random) / 100);
+            updateComision();
+            return lastMax - comision;
+        } else {
+            lastMax = pretMaxim;
+            updateComision();
+            return pretMaxim - comision;
+        }
     }
 }

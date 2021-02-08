@@ -4,12 +4,15 @@ public class Administrator extends Angajat implements Runnable{
 
     }
 
-    public Administrator(CasaDeLicitatii casaDeLicitatii){
-        this.casaDeLicitatii = casaDeLicitatii;
+    public Administrator(){
     }
 
     @Override
     public void run() {
 
+    }
+
+    public void addProdus(Produs produs){
+        CasaDeLicitatii.getInstance().addProdus(produs);
     }
 }
